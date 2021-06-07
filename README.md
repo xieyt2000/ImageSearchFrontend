@@ -1,5 +1,9 @@
 # ImageSearchFrontend
 
+Frontend code of a simple image engine.
+
+Project of THU Search Engine course
+
 ## Build Setup
 
 ```bash
@@ -18,3 +22,8 @@ $ npm run generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+
+
+## Reference
+
+Backend: [image-search](https://github.com/yueyang2000/image-search)
