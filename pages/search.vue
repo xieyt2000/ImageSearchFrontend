@@ -141,7 +141,7 @@ export default {
         (res) => {
           this.lastQueryTime = performance.now() - start
           if (res.data.code !== 200) {
-            return this.$nuxt.error({ message: 'no search result' })
+            return this.$nuxt.error({ message: res.data.msg })
           }
           const { data } = res.data
           this.totalNum = data.total
