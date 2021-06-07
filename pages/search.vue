@@ -81,6 +81,16 @@
         :total-visible="9"
       />
     </div>
+    <v-dialog v-model="loading" fullscreen full-width>
+      <v-container fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+        <v-layout justify-center align-center>
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          />
+        </v-layout>
+      </v-container>
+    </v-dialog>
   </div>
 </template>
 
@@ -101,7 +111,8 @@ export default {
       totalNum: 0,
       lastQueryTime: 0,
       totalPage: 1,
-      imageRoot: 'http://127.0.0.1:8000/api/image?image='
+      imageRoot: 'http://127.0.0.1:8000/api/image?image=',
+      loading: false
     }
   },
   watch: {
@@ -137,6 +148,7 @@ export default {
     init () {
       const queryObj = this.$route.query
       const start = performance.now()
+      this.loading = true
       this.$axios.get('/api/search', { params: queryObj }).then(
         (res) => {
           this.lastQueryTime = performance.now() - start
@@ -148,6 +160,7 @@ export default {
           this.totalPage = Math.floor((data.total - 1) / data.num) + 1
           this.page = data.page
           this.searchImgIDs = data.images
+          this.loading = false
         }
       )
     }
