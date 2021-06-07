@@ -141,11 +141,7 @@ export default {
         (res) => {
           this.lastQueryTime = performance.now() - start
           if (res.data.code !== 200) {
-            // eslint-disable-next-line no-undef
-            context.error({
-              statusCode: 404,
-              message: 'No query result'
-            })
+            return this.$nuxt.error({ message: 'no search result' })
           }
           const { data } = res.data
           this.totalNum = data.total
