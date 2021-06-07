@@ -140,7 +140,7 @@ export default {
       this.queryString = this.$route.query.query ? this.$route.query.query : ''
       this.size = this.$route.query.size ? this.$route.query.size : SIZE.ANY
       this.color = this.$route.query.color ? this.$route.query.color : '#000000'
-      this.colorType = this.$route.query.colorType ? this.$route.query.colorType : 'Any color'
+      this.colorType = this.$route.query.color ? COLOR_TYPE.PICK : COLOR_TYPE.ANY
     },
     filterSearch () {
       const query = {
