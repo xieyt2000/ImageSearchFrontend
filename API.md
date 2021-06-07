@@ -34,8 +34,8 @@
 | 参数名    | 必选 | 类型                                                        | 说明         | 默认值      |
 | :-------- | :--- | :---------------------------------------------------------- | ------------ | ----------- |
 | query     | 是   | string                                                      | 查询词       |             |
-| size      | 否   | string ([Any size, Large, Medium, Small])                    | 图片大小     | 'Any size'  |
-| color     | 否   | string ('#000000')                                          | 颜色 为空表示不筛选        |             |
+| size      | 否   | string ([Any size, Large, Medium, Small])                    | 图片大小，分界点为350K、150K     | 'Any size'  |
+| color     | 否   | string ('#000000')                                          | 颜色，为空表示不筛选        |             |
 | page      | 否   | int                                                         | 翻页         | 1           |
 | num       | 否   | int                                                         | 一页数量     | 20          |
 
