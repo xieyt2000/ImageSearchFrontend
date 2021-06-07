@@ -81,25 +81,26 @@
         :total-visible="9"
       />
     </div>
-    <v-dialog v-model="loading" fullscreen full-width>
-      <v-container fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
-        <v-layout justify-center align-center>
-          <v-progress-circular
-            indeterminate
-            color="primary"
-          />
-        </v-layout>
-      </v-container>
-    </v-dialog>
+    <template>
+      <div class="vld-parent">
+        <loading
+          :active.sync="loading"
+          :is-full-page="true"
+        />
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
 import ImageUrls from '@/components/ImageUrls'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
 
 export default {
   components: {
-    ImageUrls
+    ImageUrls,
+    Loading
   },
   data () {
     return {
@@ -146,9 +147,9 @@ export default {
   },
   methods: {
     init () {
+      this.loading = true
       const queryObj = this.$route.query
       const start = performance.now()
-      this.loading = true
       this.$axios.get('/api/search', { params: queryObj }).then(
         (res) => {
           this.lastQueryTime = performance.now() - start
