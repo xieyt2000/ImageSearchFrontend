@@ -1,116 +1,175 @@
 <template>
-  <v-app dark>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-    >
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+  <v-app>
     <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
+      v-if="$route.path==='/search/'"
+      color="#ffffff"
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
+      <img
+        src="/vuetify-logo.svg"
+        style="height:100%;cursor:pointer"
+        alt="go-index"
+        @click="$router.push({path:'/'})"
       >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
+      <div style="height:100%; width:30%">
+        <v-text-field
+          v-model="queryString"
+          class="mx-4"
+          outlined
+          rounded
+          single-lined
+          prepend-inner-icon="mdi-magnify"
+          @keydown="searchOnEnter"
+        />
+      </div>
+      <v-dialog
+        v-model="filterDialog"
+        width="25%"
       >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
+        <template #activator="{ on }">
+          <v-btn
+            icon
+            v-on="on"
+          >
+            <v-icon>mdi-filter-outline</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-card-title primary-title>
+            Filter
+          </v-card-title>
+
+          <v-container>
+            <v-row>
+              <v-col>
+                <v-select
+                  v-model="size"
+                  class="ma-2"
+                  :items="Object.values(SIZE)"
+                  label="Image size"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-select
+                  v-model="colorType"
+                  class="ma-2"
+                  :items="Object.values(COLOR_TYPE)"
+                  label="Color"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <v-row v-if="colorType===COLOR_TYPE.PICK">
+              <v-spacer />
+              <v-col>
+                <v-color-picker
+                  v-model="color"
+                  class="ma-2"
+                  hide-mode-switch
+                />
+              </v-col>
+              <v-spacer />
+            </v-row>
+          </v-container>
+
+          <v-divider />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              @click="filterDialog = false;filterSearch()"
+            >
+              SEARCH
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-spacer />
-      <v-btn
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
     </v-app-bar>
-    <v-main>
-      <v-container>
-        <nuxt />
-      </v-container>
-    </v-main>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer
-      :absolute="!fixed"
-      app
-    >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
+    <v-content style="width:100%">
+      <nuxt />
+    </v-content>
   </v-app>
 </template>
 
 <script>
+const SIZE = {
+  ANY: 'Any size',
+  LARGE: 'Large',
+  MEDIUM: 'Medium',
+  Icon: 'Icon'
+}
+const COLOR_TYPE = {
+  ANY: 'Any color',
+  BW: 'Black and white',
+  TRANSPARENT: 'Transparent',
+  PICK: 'Pick color'
+}
 export default {
+  components: {},
   data () {
     return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+      queryString: '',
+      filterDialog: false,
+      size: SIZE.ANY,
+      color: '',
+      colorType: COLOR_TYPE.ANY
+    }
+  },
+  watch: {
+    '$route.path' () {
+      if (this.$route.path === '/search/') {
+        this.init()
+      }
+    },
+    '$route.query' () {
+      if (this.$route.path === '/search/') {
+        this.init()
+      }
+    }
+  },
+  created () {
+    this.SIZE = SIZE
+    this.COLOR_TYPE = COLOR_TYPE
+  },
+  mounted () {
+    if (this.$route.path === '/search/') {
+      this.init()
+    }
+  },
+  methods: {
+    searchOnEnter (e) {
+      if (e.key === 'Enter') {
+        this.search()
+      }
+    },
+    init () {
+      this.queryString = this.$route.query.query ? this.$route.query.query : ''
+      this.size = this.$route.query.size ? this.$route.query.size : SIZE.ANY
+      this.color = this.$route.query.color ? this.$route.query.color : '#000000'
+      this.colorType = this.$route.query.colorType ? this.$route.query.colorType : 'Any color'
+    },
+    filterSearch () {
+      this.$router.push({
+        path: '/search/',
+        query: {
+          query: this.queryString,
+          size: this.size,
+          colorType: this.colorType,
+          color: this.color
         }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+      })
+    },
+    search () {
+      this.$router.push({
+        path: '/search/',
+        query: {
+          query: this.queryString
+        }
+      })
     }
   }
 }
