@@ -96,18 +96,8 @@
 </template>
 
 <script>
-const SIZE = {
-  ANY: 'Any size',
-  LARGE: 'Large',
-  MEDIUM: 'Medium',
-  Icon: 'Icon'
-}
-const COLOR_TYPE = {
-  ANY: 'Any color',
-  BW: 'Black and white',
-  TRANSPARENT: 'Transparent',
-  PICK: 'Pick color'
-}
+import { COLOR_TYPE, SIZE } from 'static/constant'
+
 export default {
   components: {},
   data () {
@@ -153,14 +143,22 @@ export default {
       this.colorType = this.$route.query.colorType ? this.$route.query.colorType : 'Any color'
     },
     filterSearch () {
+      const query = {
+        query: this.queryString,
+        size: this.size,
+        colorType: this.colorType,
+        color: this.color
+      }
+      if (query.size === SIZE.ANY) {
+        delete query.size
+      }
+      if (query.colorType === COLOR_TYPE.ANY) {
+        delete query.color
+      }
+      delete query.colorType
       this.$router.push({
         path: '/search/',
-        query: {
-          query: this.queryString,
-          size: this.size,
-          colorType: this.colorType,
-          color: this.color
-        }
+        query
       })
     },
     search () {
