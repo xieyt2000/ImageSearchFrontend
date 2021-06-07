@@ -161,6 +161,8 @@ export default {
           this.page = data.page
           this.searchImgIDs = data.images
           this.loading = false
+        }, (msg) => {
+          return this.$nuxt.error({ message: msg })
         }
       )
     }
