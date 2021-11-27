@@ -2,7 +2,9 @@
 
 Frontend code of a simple image engine.
 
-Project of THU Search Engine course
+Project of THU Search Engine course.
+
+For details and demo, refer to [report](https://github.com/xieyt2000/ImageSearchFrontend/blob/main/reports/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.md)
 
 ## Build Setup
 
